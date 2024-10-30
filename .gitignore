@@ -1,0 +1,31 @@
+# 환경 변수 파일
+.env
+.env.test
+.env.production
+.env*.local
+
+# 빌드 결과물
+dist/
+build/
+
+# 프로젝트별 설정 파일
+package-lock.json
+
+# Dependency directories
+node_modules
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# nextjs
+.next
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# misc
+.DS_Store
