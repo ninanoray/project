@@ -1,3 +1,4 @@
+import QueryProvider from "@/lib/query-provider";
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
@@ -21,7 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body className={notoSansKr.className}>{children}</body>
+      <body className={notoSansKr.className}>
+        <QueryProvider>{children}</QueryProvider>
+      </body>
     </html>
   );
 }

@@ -1,24 +1,58 @@
-import { produce } from "immer";
+import { useEffect, useState } from "react";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
-// store의 타입을 정의해준다.
+// Resetting multiple stores at once
+const storeResetFns = new Set<() => void>();
 
-interface State {
+const resetAllStores = () => {
+  storeResetFns.forEach((resetFn) => {
+    resetFn();
+  });
+};
+
+type State = {
   data: { page: string };
-}
-interface Store extends State {
-  setData: (newData: string) => void;
-}
+};
+type Actions = {
+  setPage: (data: string) => void;
+  reset: () => void;
+};
+type DataStore = State & Actions;
 
-// store를 create
-const useStore = create<Store>((set) => ({
-  data: { page: "" },
-  setData: (newData: string) =>
-    set(
-      produce((state: State) => {
-        state.data.page = newData;
-      })
-    ),
-}));
+const initialState: State = { data: { page: "" } };
+
+export const useDataStore = create<DataStore>()(
+  immer(
+    persist(
+      (set) => ({
+        ...initialState,
+        setPage: (data: string) =>
+          set((state: State) => {
+            state.data.page = data;
+          }),
+        reset: () => set(initialState),
+      }),
+      {
+        name: "dataStorage",
+      }
+    )
+  )
+);
+
+const useStore = <T, F>(
+  store: (callback: (state: T) => unknown) => unknown,
+  callback: (state: T) => F
+) => {
+  const result = store(callback) as F;
+  const [data, setData] = useState<F>();
+
+  useEffect(() => {
+    setData(result);
+  }, [result]);
+
+  return data;
+};
 
 export default useStore;
